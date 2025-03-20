@@ -1,5 +1,3 @@
-import { string } from "zod";
-
 export type User = {
   id: string;
   name: string;

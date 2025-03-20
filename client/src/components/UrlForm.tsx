@@ -1,17 +1,14 @@
 import { StoreUrlSchema } from "@/types/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { TypeOf, z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useState } from "react";
-import { QRCodeSVG } from "qrcode.react";
 import { useUrlStore } from "@/stores/useUrlStore";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 
 const UrlForm = () => {
-  const [qrValue, setQrValue] = useState("");
   const { storeUrl, loadingUrl } = useUrlStore();
   const router = useNavigate();
 
@@ -23,7 +20,6 @@ const UrlForm = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof StoreUrlSchema>) => {
-    // setQrValue(data.originalUrl);
     try {
       await storeUrl(data);
       router("/");
@@ -42,11 +38,6 @@ const UrlForm = () => {
             {loadingUrl ? "Adding..." : "Add"}
           </Button>
         </form>
-        {/* {qrValue && (
-          <div className="flex justify-center mt-4">
-            <QRCodeSVG value={qrValue} size={150} />
-          </div>
-        )} */}
       </CardContent>
     </Card>
   );
