@@ -20,12 +20,11 @@ enum Role {
 
 model User {
   id String @id @default(cuid())
-
   name String 
   email String @unique
   password String 
-  role Role @default(user)
-  books Book[]
+  
+  
   url Url[]
 }
 
@@ -38,13 +37,3 @@ model Url{
   user User @relation(fields: [userId], references: [id])
 }
 
-model Book{
-  id String @id @default(cuid())
-  name String
-  author String
-  description String
-  image String
-  userId String
-  isAvailable Boolean @default(true)
-  user User @relation(fields: [userId], references: [id])
-}

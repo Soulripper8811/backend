@@ -1,0 +1,55 @@
+import { StoreUrlSchema } from "@/types/schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { TypeOf, z } from "zod";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
+import { useUrlStore } from "@/stores/useUrlStore";
+import { useNavigate } from "react-router-dom";
+
+const UrlForm = () => {
+  const [qrValue, setQrValue] = useState("");
+  const { storeUrl, loadingUrl } = useUrlStore();
+  const router = useNavigate();
+
+  const form = useForm<z.infer<typeof StoreUrlSchema>>({
+    resolver: zodResolver(StoreUrlSchema),
+    defaultValues: {
+      originalUrl: "",
+    },
+  });
+
+  const onSubmit = async (data: z.infer<typeof StoreUrlSchema>) => {
+    // setQrValue(data.originalUrl);
+    try {
+      await storeUrl(data);
+      router("/");
+      form.reset();
+    } catch (error) {
+      console.error("Error in onSubmit", error);
+    }
+  };
+
+  return (
+    <Card className="max-w-md mx-auto p-4 shadow-lg rounded-lg">
+      <CardContent>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <Input placeholder="Enter URL" {...form.register("originalUrl")} />
+          <Button type="submit" className="w-full">
+            {loadingUrl ? "Adding..." : "Add"}
+          </Button>
+        </form>
+        {/* {qrValue && (
+          <div className="flex justify-center mt-4">
+            <QRCodeSVG value={qrValue} size={150} />
+          </div>
+        )} */}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default UrlForm;
