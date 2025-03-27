@@ -11,5 +11,6 @@ export type Url = {
   shortenedUrl: string;
   user: {
     name: string;
+    id: string;
   };
 };

@@ -37,6 +37,7 @@ export const getAllUrls = async (req, res) => {
         user: {
           select: {
             name: true,
+            id: true,
           },
         },
       },
@@ -46,4 +47,23 @@ export const getAllUrls = async (req, res) => {
     console.error("Error in getAllUrls", error);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+export const deleteUrl = async (req, res) => {
+  try {
+    const { shortenedUrlId } = req.params;
+    if (!shortenedUrlId) {
+      return res
+        .status(400)
+        .json({ message: "Please provide shortenedUrlId", success: false });
+    }
+    await prisma.url.delete({
+      where: {
+        id: shortenedUrlId,
+      },
+    });
+    res
+      .status(200)
+      .json({ success: true, message: "Url deleted successfully" });
+  } catch (error) {}
 };

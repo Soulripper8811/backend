@@ -10,9 +10,10 @@ export interface UrlState {
   getAllUrls: () => Promise<void>;
   storeUrl: (data: { originalUrl: string }) => Promise<void>;
   getSingleOrginal: (data: { shortenedUrl: string }) => Promise<void>;
+  deleteUrl: (data: { shortenedUrlId: string }) => Promise<void>;
 }
 
-export const useUrlStore = create<UrlState>((set) => ({
+export const useUrlStore = create<UrlState>((set, get) => ({
   urls: [],
   singleOrginal: "",
   loadingUrl: true,
@@ -59,6 +60,19 @@ export const useUrlStore = create<UrlState>((set) => ({
       set({ singleOrginal: result.data.originalUrl });
     } catch (error: any) {
       console.error("Error in getSingleOrginal", error);
+    }
+  },
+  deleteUrl: async (data: { shortenedUrlId: string }) => {
+    set({ loadingUrl: true });
+    try {
+      await axiosInsatnce.delete(`/url/${data.shortenedUrlId}`);
+      get().getAllUrls();
+      toast.success("Url deleted successfully");
+    } catch (error: any) {
+      console.error("Error in storeUrl", error);
+      toast.error(error.response?.data?.message || "Failed to store the URL.");
+    } finally {
+      set({ loadingUrl: false });
     }
   },
 }));

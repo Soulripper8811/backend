@@ -5,12 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useUrlStore } from "@/stores/useUrlStore";
-import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 const UrlForm = () => {
-  const { storeUrl, loadingUrl } = useUrlStore();
-  const router = useNavigate();
+  const { storeUrl, loadingUrl, getAllUrls } = useUrlStore();
 
   const form = useForm<z.infer<typeof StoreUrlSchema>>({
     resolver: zodResolver(StoreUrlSchema),
@@ -22,8 +20,10 @@ const UrlForm = () => {
   const onSubmit = async (data: z.infer<typeof StoreUrlSchema>) => {
     try {
       await storeUrl(data);
-      router("/");
       form.reset();
+      getAllUrls();
+
+      // router("/");
     } catch (error) {
       console.error("Error in onSubmit", error);
     }
